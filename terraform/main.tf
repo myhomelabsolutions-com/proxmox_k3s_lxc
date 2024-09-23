@@ -61,6 +61,12 @@ resource "proxmox_lxc" "k3s_node" {
     inline = [
       "echo 'overlay' >> /etc/modules",
       "mount --make-rshared /",
+      "echo \"mount -o remount,rw /\" >> /etc/rc.local",
+      "echo \"mount -o remount,rw /proc\" >> /etc/rc.local",
+      "echo \"mount -o remount,rw /sys\" >> /etc/rc.local",
+      "chmod +x /etc/rc.local",
+      "systemctl enable rc-local.service",
+      "systemctl start rc-local.service",
       "sed -i 's/lxc.cgroup.memory.use_hierarchy = 0/lxc.cgroup.memory.use_hierarchy = 1/' /etc/lxc/default.conf",
       "sed -i 's/lxc.cgroup.cpu.rt.runtime = -1/lxc.cgroup.cpu.rt.runtime = 950000/' /etc/lxc/default.conf",
       "sed -i 's/lxc.cgroup.cpu.rt.period = 1000000/lxc.cgroup.cpu.rt.period = 1000000/' /etc/lxc/default.conf",
