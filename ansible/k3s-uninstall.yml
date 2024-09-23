@@ -1,0 +1,24 @@
+---
+- name: Uninstall k3s from all nodes
+  hosts: k3s
+  become: yes
+  tasks:
+    - name: Run k3s uninstall script
+      command: /usr/local/bin/k3s-uninstall.sh
+      ignore_errors: yes
+
+    - name: Remove k3s data directory
+      file:
+        path: /var/lib/rancher/k3s
+        state: absent
+
+    - name: Remove k3s configuration directory
+      file:
+        path: /etc/rancher/k3s
+        state: absent
+
+    - name: Remove kubectl configuration
+      file:
+        path: /root/.kube/config
+        state: absent
+      when: inventory_hostname in groups['k3s_master']

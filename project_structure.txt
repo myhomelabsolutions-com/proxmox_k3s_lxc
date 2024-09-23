@@ -1,0 +1,13 @@
+k3s_proxmox_lxc_ansible/
+├── terraform/
+│   ├── main.tf
+│   ├── variables.tf
+│   ├── outputs.tf
+│   └── inventory.tmpl
+├── ansible/
+│   ├── inventory.ini
+│   ├── k3s-install.yml
+│   └── k3s-uninstall.yml
+└── kubernetes/
+    ├── argocd.yaml
+    └── ingress.yaml

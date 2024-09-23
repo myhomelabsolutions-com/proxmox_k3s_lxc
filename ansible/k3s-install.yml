@@ -1,0 +1,75 @@
+---
+- name: Install k3s on master node
+  hosts: k3s_master
+  become: yes
+  tasks:
+    - name: Download k3s installation script
+      get_url:
+        url: https://get.k3s.io
+        dest: /tmp/k3s-install.sh
+        mode: '0700'
+
+    - name: Install k3s on master
+      command: /tmp/k3s-install.sh
+      environment:
+        INSTALL_K3S_EXEC: "server --node-external-ip={{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
+
+    - name: Get k3s token
+      command: cat /var/lib/rancher/k3s/server/node-token
+      register: k3s_token
+
+- name: Install k3s on worker nodes
+  hosts: k3s_workers
+  become: yes
+  tasks:
+    - name: Download k3s installation script
+      get_url:
+        url: https://get.k3s.io
+        dest: /tmp/k3s-install.sh
+        mode: '0700'
+
+    - name: Install k3s on workers
+      command: /tmp/k3s-install.sh
+      environment:
+        K3S_URL: "https://{{ hostvars[groups['k3s_master'][0]]['ansible_fqdn'] }}:6443"
+        K3S_TOKEN: "{{ hostvars[groups['k3s_master'][0]]['k3s_token']['stdout'] }}"
+
+- name: Configure kubectl on master
+  hosts: k3s_master
+  become: yes
+  tasks:
+    - name: Create .kube directory
+      file:
+        path: /root/.kube
+        state: directory
+        mode: '0700'
+
+    - name: Copy k3s.yaml to .kube/config
+      copy:
+        src: /etc/rancher/k3s/k3s.yaml
+        dest: /root/.kube/config
+        remote_src: yes
+
+    - name: Replace https://localhost:6443 with master hostname
+      replace:
+        path: /root/.kube/config
+        regexp: 'https://localhost:6443'
+        replace: 'https://{{ ansible_fqdn }}:6443'
+
+- name: Verify k3s cluster
+  hosts: k3s_master
+  become: yes
+  tasks:
+    - name: Check k3s cluster status
+      command: kubectl get nodes
+      register: k3s_cluster_status
+
+    - name: Display k3s cluster status
+      debug:
+        msg: "{{ k3s_cluster_status.stdout }}"
+
+    - name: Ensure k3s cluster is healthy
+      assert:
+        that:
+          - k3s_cluster_status.rc == 0
+        fail_msg: "k3s cluster is not healthy"

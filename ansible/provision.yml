@@ -1,0 +1,107 @@
+---
+- name: Provision LXD containers
+  hosts: all
+  become: yes
+  vars:
+    cloudflare_api_token: "{{ lookup('env', 'CLOUDFLARE_API_TOKEN') }}"
+    cloudflare_zone: "myhomelabsolutions.com"
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Upgrade all packages
+      apt:
+        upgrade: dist
+
+    - name: Install common packages
+      apt:
+        name:
+          - curl
+          - wget
+          - vim
+          - htop
+          - net-tools
+          - python3-pip
+          - openssh-server
+          - tzdata
+        state: present
+
+    - name: Install cloudflare-cli
+      pip:
+        name: cloudflare-cli
+
+    - name: Set timezone
+      command: timedatectl set-timezone UTC
+      changed_when: false
+
+    - name: Enable password authentication for SSH
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?PasswordAuthentication'
+        line: 'PasswordAuthentication yes'
+      notify: Restart SSH
+
+    - name: Enable root login
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#?PermitRootLogin'
+        line: 'PermitRootLogin yes'
+      notify: Restart SSH
+
+    - name: Set root password
+      user:
+        name: root
+        password: "{{ 'password' | password_hash('sha512') }}"
+
+    - name: Get public IP
+      uri:
+        url: https://ifconfig.me
+        return_content: yes
+      register: public_ip
+
+    - name: Update Cloudflare DNS
+      command: >
+        cf-cli --token {{ cloudflare_api_token }} 
+        zone {{ cloudflare_zone }} 
+        dns add {{ inventory_hostname }}.{{ cloudflare_zone }} A {{ public_ip.content }}
+      args:
+        creates: /tmp/cloudflare_dns_updated
+
+    - name: Mark Cloudflare DNS as updated
+      file:
+        path: /tmp/cloudflare_dns_updated
+        state: touch
+
+    - name: Generate SSH key for root
+      user:
+        name: root
+        generate_ssh_key: yes
+        ssh_key_bits: 2048
+        ssh_key_file: .ssh/id_rsa
+
+    - name: Fetch root's public key
+      fetch:
+        src: /root/.ssh/id_rsa.pub
+        dest: /tmp/{{ inventory_hostname }}_id_rsa.pub
+        flat: yes
+
+    - name: Add other hosts to known_hosts
+      known_hosts:
+        name: "{{ hostvars[item]['ansible_host'] }}"
+        key: "{{ lookup('file', '/tmp/' + item + '_id_rsa.pub') }}"
+      loop: "{{ groups['all'] }}"
+      when: item != inventory_hostname
+
+    - name: Set up passwordless SSH
+      authorized_key:
+        user: root
+        state: present
+        key: "{{ lookup('file', '/tmp/' + item + '_id_rsa.pub') }}"
+      loop: "{{ groups['all'] }}"
+
+  handlers:
+    - name: Restart SSH
+      service:
+        name: sshd
+        state: restarted
