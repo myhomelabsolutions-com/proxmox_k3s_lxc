@@ -8,6 +8,9 @@ This project automates the deployment of a K3s cluster on Proxmox LXC containers
 2. Terraform installed on your local machine
 3. Ansible installed on your local machine
 4. Cloudflare account for DNS management
+5. LXD version 4.0 or later
+6. Ubuntu 20.04 LXC template (local:vztmpl/ubuntu-20.04-standard_20.04-1_amd64.tar.gz)
+
 
 ## Setup
 
