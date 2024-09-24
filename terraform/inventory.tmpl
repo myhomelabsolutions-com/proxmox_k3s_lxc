@@ -15,6 +15,9 @@ ${split(".", hostname)[0]}
 k3s_master
 k3s_workers
 
+[proxmox]
+10.0.0.99
+
 [all:vars]
 ansible_user=root
 ansible_ssh_private_key_file=~/.ssh/id_rsa

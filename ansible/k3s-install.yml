@@ -3,6 +3,39 @@
   hosts: k3s_master
   become: yes
   tasks:
+    - name: Load br_netfilter kernel module
+      command: modprobe br_netfilter
+      ignore_errors: yes
+
+    - name: Load overlay kernel module
+      command: modprobe overlay
+      ignore_errors: yes
+    - name: Check if /etc/rc.local file exists in LXC containers
+      stat:
+        path: /etc/rc.local
+      register: rc_local_file
+
+    - name: Create /etc/rc.local file in LXC containers
+      blockinfile:
+        path: /etc/rc.local
+        create: yes
+        block: |
+          #!/bin/sh -e
+
+          # Kubeadm 1.15 needs /dev/kmsg to be there, but it's not in lxc, but we can just use /dev/console instead
+          # see: https://github.com/kubernetes-sigs/kind/issues/662
+          if [ ! -e /dev/kmsg ]; then
+              ln -s /dev/console /dev/kmsg
+          fi
+
+          # https://medium.com/@kvaps/run-kubernetes-in-lxc-container-f04aa94b6c9c
+          mount --make-rshared /
+
+    - name: Make /etc/rc.local executable
+      file:
+        path: /etc/rc.local
+        mode: '0755'
+
     - name: Download k3s installation script
       get_url:
         url: https://get.k3s.io
@@ -22,6 +55,16 @@
   hosts: k3s_workers
   become: yes
   tasks:
+    - name: Load br_netfilter kernel module
+      modprobe:
+        name: br_netfilter
+        state: present
+
+    - name: Load overlay kernel module
+      modprobe:
+        name: overlay
+        state: present
+
     - name: Download k3s installation script
       get_url:
         url: https://get.k3s.io

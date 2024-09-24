@@ -61,12 +61,21 @@ resource "proxmox_lxc" "k3s_node" {
     inline = [
       "echo 'overlay' >> /etc/modules",
       "mount --make-rshared /",
-      "echo \"mount -o remount,rw /\" >> /etc/rc.local",
-      "echo \"mount -o remount,rw /proc\" >> /etc/rc.local",
-      "echo \"mount -o remount,rw /sys\" >> /etc/rc.local",
+      "echo \"lxc.apparmor.profile=unconfined\" >> /etc/lxc/default.conf",
+      "echo \"lxc.cgroup.devices.allow=a\" >> /etc/lxc/default.conf",
+      "echo \"lxc.cap.drop=\" >> /etc/lxc/default.conf",
+      "echo \"lxc.mount.auto=proc:rw sys:rw\" >> /etc/lxc/default.conf",
+      "echo \"#!/bin/sh -e\" >> /etc/rc.local",
+      "echo \"\" >> /etc/rc.local",
+      "echo \"# Kubeadm 1.15 needs /dev/kmsg to be there, but it's not in lxc, but we can just use /dev/console instead\" >> /etc/rc.local",
+      "echo \"# see: https://github.com/kubernetes-sigs/kind/issues/662\" >> /etc/rc.local",
+      "echo \"if [ ! -e /dev/kmsg ]; then\" >> /etc/rc.local",
+      "echo \"    ln -s /dev/console /dev/kmsg\" >> /etc/rc.local",
+      "echo \"fi\" >> /etc/rc.local",
+      "echo \"\" >> /etc/rc.local",
+      "echo \"# https://medium.com/@kvaps/run-kubernetes-in-lxc-container-f04aa94b6c9c\" >> /etc/rc.local",
+      "echo \"mount --make-rshared /\" >> /etc/rc.local",
       "chmod +x /etc/rc.local",
-      "systemctl enable rc-local.service",
-      "systemctl start rc-local.service",
       "sed -i 's/lxc.cgroup.memory.use_hierarchy = 0/lxc.cgroup.memory.use_hierarchy = 1/' /etc/lxc/default.conf",
       "sed -i 's/lxc.cgroup.cpu.rt.runtime = -1/lxc.cgroup.cpu.rt.runtime = 950000/' /etc/lxc/default.conf",
       "sed -i 's/lxc.cgroup.cpu.rt.period = 1000000/lxc.cgroup.cpu.rt.period = 1000000/' /etc/lxc/default.conf",
@@ -81,12 +90,10 @@ resource "proxmox_lxc" "k3s_node" {
       type     = "ssh"
       user     = "root"
       password = var.lxc_password
-      host     = "${self.hostname}"
+      host     = self.hostname
     }
   }
-}
-
-resource "cloudflare_record" "k3s_dns" {
+}resource "cloudflare_record" "k3s_dns" {
   count = var.node_count
   zone_id = var.cloudflare_zone_id
   name = "${proxmox_lxc.k3s_node[count.index].hostname}.${var.domain}"
@@ -104,13 +111,68 @@ resource "local_file" "ansible_inventory" {
   filename = "${path.module}/../ansible/inventory.ini"
 }
 
-resource "null_resource" "ansible_provisioner" {
-  depends_on = [local_file.ansible_inventory, cloudflare_record.k3s_dns]
+resource "null_resource" "k3s_master_setup" {
+  depends_on = [proxmox_lxc.k3s_node, cloudflare_record.k3s_dns]
 
-  provisioner "local-exec" {
-    command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i ${path.module}/../ansible/inventory.ini ${path.module}/../ansible/k3s-install.yml"
-    environment = {
-      CLOUDFLARE_API_TOKEN = var.cloudflare_api_token
-    }
+  connection {
+    type     = "ssh"
+    user     = "root"
+    password = var.lxc_password
+    host     = proxmox_lxc.k3s_node[0].hostname
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "modprobe br_netfilter",
+      "modprobe overlay",
+      "echo '#!/bin/sh -e' > /etc/rc.local",
+      "echo 'if [ ! -e /dev/kmsg ]; then ln -s /dev/console /dev/kmsg; fi' >> /etc/rc.local",
+      "echo 'mount --make-rshared /' >> /etc/rc.local",
+      "chmod +x /etc/rc.local",
+      "curl -sfL https://get.k3s.io -o /tmp/k3s-install.sh",
+      "chmod +x /tmp/k3s-install.sh",
+      "INSTALL_K3S_EXEC='server --node-external-ip=${proxmox_lxc.k3s_node[0].network[0].ip}' /tmp/k3s-install.sh",
+      "mkdir -p /root/.kube",
+      "cp /etc/rancher/k3s/k3s.yaml /root/.kube/config",
+      "sed -i 's|https://localhost:6443|https://${proxmox_lxc.k3s_node[0].hostname}:6443|g' /root/.kube/config"
+    ]
+  }
+}
+resource "null_resource" "k3s_worker_setup" {
+  count      = var.node_count - 1
+  depends_on = [null_resource.k3s_master_setup]
+
+  connection {
+    type     = "ssh"
+    user     = "root"
+    password = var.lxc_password
+    host     = proxmox_lxc.k3s_node[count.index + 1].hostname
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "modprobe br_netfilter",
+      "modprobe overlay",
+      "curl -sfL https://get.k3s.io -o /tmp/k3s-install.sh",
+      "chmod +x /tmp/k3s-install.sh",
+      "K3S_URL='https://${proxmox_lxc.k3s_node[0].hostname}:6443' K3S_TOKEN='${null_resource.k3s_master_setup.triggers.k3s_token}' /tmp/k3s-install.sh"
+    ]
+  }
+}
+
+resource "null_resource" "verify_k3s_cluster" {
+  depends_on = [null_resource.k3s_worker_setup]
+
+  connection {
+    type     = "ssh"
+    user     = "root"
+    password = var.lxc_password
+    host     = proxmox_lxc.k3s_node[0].hostname
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "kubectl get nodes"
+    ]
   }
 }

@@ -27,3 +27,7 @@ output "public_ipv4" {
   description = "Public IPv4 address used for Cloudflare DNS records"
   value       = chomp(data.http.public_ipv4.response_body)
 }
+output "k3s_node_ids" {
+  description = "IDs of the k3s nodes"
+  value       = [for node in proxmox_lxc.k3s_node : node.id]
+}
