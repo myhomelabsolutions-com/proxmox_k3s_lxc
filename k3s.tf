@@ -21,7 +21,8 @@ resource "null_resource" "k3s_master" {
   }
 
   provisioner "local-exec" {
-    command = "scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/id_rsa ${var.container_user}@${proxmox_lxc.k3s_master.hostname}:/tmp/k3s_join_token.txt k3s_join_token.txt"
+    command = "scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/id_rsa ${var.container_user}@${proxmox_lxc.k3s_master.hostname}:/tmp/k3s_join_token.txt k3s_join_token.txt  && scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/id_rsa k3s_join_token.txt ${var.container_user}@${proxmox_lxc.k3s_worker[0].hostname}:/tmp/k3s_join_token.txt && scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/id_rsa k3s_join_token.txt ${var.container_user}@${proxmox_lxc.k3s_worker[1].hostname}:/tmp/k3s_join_token.txt"
+
   }
 }
 
@@ -30,7 +31,7 @@ resource "null_resource" "k3s_workers" {
   depends_on = [proxmox_lxc.k3s_worker, null_resource.lxc_config, null_resource.k3s_master]
 
   provisioner "local-exec" {
-    command = "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/id_rsa ${var.container_user}@${proxmox_lxc.k3s_worker[count.index].hostname} 'curl -sfL https://get.k3s.io | K3S_URL=https://${proxmox_lxc.k3s_master.hostname}:6443 K3S_TOKEN=$(cat k3s_join_token.txt) K3S_NODE_LABEL=node-role.kubernetes.io/worker=true K3S_NODE_TAINT=node-role.kubernetes.io/worker=:NoSchedule K3S_DISABLE_TRAEFIK=true sh -'"
+    command = "ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/id_rsa ${var.container_user}@${proxmox_lxc.k3s_worker[count.index].hostname} 'curl -sfL https://get.k3s.io | K3S_URL=https://${proxmox_lxc.k3s_master.hostname}:6443 K3S_TOKEN=$(cat /tmp/k3s_join_token.txt) K3S_NODE_LABEL=node-role.kubernetes.io/worker=true K3S_NODE_TAINT=node-role.kubernetes.io/worker=:NoSchedule K3S_DISABLE_TRAEFIK=true sh -'"
   }
 }
 

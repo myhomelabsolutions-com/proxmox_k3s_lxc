@@ -10,13 +10,19 @@ resource "null_resource" "install_argocd" {
 
   provisioner "remote-exec" {
     inline = [
+      # Delete existing resources if they exist
+      "kubectl delete namespace argocd --ignore-not-found",
+      "kubectl delete -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.1.0/deploy/static/provider/cloud/deploy.yaml --ignore-not-found",
+      "kubectl delete -f https://github.com/cert-manager/cert-manager/releases/download/v1.8.0/cert-manager.yaml --ignore-not-found",
+
+      # Recreate resources
       "kubectl create namespace argocd",
       "kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml",
       "kubectl wait --for=condition=available --timeout=600s deployment/argocd-server -n argocd",
 
       # Install Nginx Ingress Controller
       "kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.1.0/deploy/static/provider/cloud/deploy.yaml",
-      "kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=120s",
+      "kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=300s",
 
       # Install cert-manager for SSL certificates
       "kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.8.0/cert-manager.yaml",
@@ -42,7 +48,6 @@ resource "null_resource" "install_argocd" {
       EOT
       EOF
       ,
-
       # Create Ingress for ArgoCD
       <<-EOF
       cat <<EOT | kubectl apply -f -
@@ -52,15 +57,12 @@ resource "null_resource" "install_argocd" {
         name: argocd-server-ingress
         namespace: argocd
         annotations:
-          kubernetes.io/ingress.class: nginx
           nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
           nginx.ingress.kubernetes.io/ssl-redirect: "true"
           cert-manager.io/cluster-issuer: letsencrypt-prod
-          nginx.ingress.kubernetes.io/server-snippet: |
-            listen 80;
-            listen 443 ssl;
-            server_name argocd.${var.domain_name} ${proxmox_lxc.k3s_master.id};
+          nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
       spec:
+        ingressClassName: nginx
         tls:
         - hosts:
           - argocd.${var.domain_name}
@@ -75,22 +77,12 @@ resource "null_resource" "install_argocd" {
                 service:
                   name: argocd-server
                   port: 
-                    number: 80
-        - http:
-            paths:
-            - path: /
-              pathType: Prefix
-              backend:
-                service:
-                  name: argocd-server
-                  port:
-                    number: 80
+                    number: 443
       EOT
       EOF
     ]
   }
 }
-
 resource "null_resource" "configure_argocd" {
   depends_on = [null_resource.install_argocd]
 

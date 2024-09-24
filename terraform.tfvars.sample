@@ -1,0 +1,6 @@
+email_address = "your_email@example.com"
+domain_name = "myhomelabsolutions.com"
+cloudflare_api_token = "your_cloudflare_api_token"
+cloudflare_zone_id = "your_cloudflare_zone_id"
+container_user = "root"
+container_password = "your_container_password"
