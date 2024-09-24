@@ -1,4 +1,0 @@
-#cloud-config
-runcmd:
-  - chmod +x /var/lib/vz/snippets/enable_kernel_modules.sh
-  - /var/lib/vz/snippets/enable_kernel_modules.sh
