@@ -1,0 +1,564 @@
+terraform init
+[0m[1mInitializing the backend...[0m
+[0m[1mInitializing provider plugins...[0m
+- Reusing previous version of cloudflare/cloudflare from the dependency lock file
+- Reusing previous version of hashicorp/null from the dependency lock file
+- Reusing previous version of hashicorp/local from the dependency lock file
+- Reusing previous version of telmate/proxmox from the dependency lock file
+- Using previously-installed hashicorp/local v2.5.2
+- Using previously-installed telmate/proxmox v3.0.1-rc4
+- Using previously-installed cloudflare/cloudflare v4.42.0
+- Using previously-installed hashicorp/null v3.2.3
+
+[0m[1m[32mTerraform has been successfully initialized![0m[32m[0m
+[0m[32m
+You may now begin working with Terraform. Try running "terraform plan" to see
+any changes that are required for your infrastructure. All Terraform commands
+should now work.
+
+If you ever set or change modules or backend configuration for Terraform,
+rerun this command to reinitialize your working directory. If you forget, other
+commands will detect it and remind you to do so if necessary.[0m
+terraform fmt
+terraform apply --auto-approve
+[0m[1mdata.local_file.k3s_join_token: Reading...[0m[0m
+[0m[1mdata.local_file.k3s_join_token: Read complete after 0s [id=144ed9ec09baf977f5792401c3ff04cf488a3754][0m
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  [32m+[0m create[0m
+
+Terraform will perform the following actions:
+
+[1m  # cloudflare_record.argocd[0m will be created
+[0m  [32m+[0m[0m resource "cloudflare_record" "argocd" {
+      [32m+[0m[0m allow_overwrite = false
+      [32m+[0m[0m content         = "24.126.172.118"
+      [32m+[0m[0m created_on      = (known after apply)
+      [32m+[0m[0m hostname        = (known after apply)
+      [32m+[0m[0m id              = (known after apply)
+      [32m+[0m[0m metadata        = (known after apply)
+      [32m+[0m[0m modified_on     = (known after apply)
+      [32m+[0m[0m name            = "argocd"
+      [32m+[0m[0m proxiable       = (known after apply)
+      [32m+[0m[0m proxied         = true
+      [32m+[0m[0m ttl             = (known after apply)
+      [32m+[0m[0m type            = "A"
+      [32m+[0m[0m value           = (known after apply)
+      [32m+[0m[0m zone_id         = "938d745de819d39760336c58e0a13727"
+    }
+
+[1m  # cloudflare_record.k3s_master[0m will be created
+[0m  [32m+[0m[0m resource "cloudflare_record" "k3s_master" {
+      [32m+[0m[0m allow_overwrite = false
+      [32m+[0m[0m content         = "24.126.172.118"
+      [32m+[0m[0m created_on      = (known after apply)
+      [32m+[0m[0m hostname        = (known after apply)
+      [32m+[0m[0m id              = (known after apply)
+      [32m+[0m[0m metadata        = (known after apply)
+      [32m+[0m[0m modified_on     = (known after apply)
+      [32m+[0m[0m name            = "k3s-master"
+      [32m+[0m[0m proxiable       = (known after apply)
+      [32m+[0m[0m proxied         = false
+      [32m+[0m[0m ttl             = (known after apply)
+      [32m+[0m[0m type            = "A"
+      [32m+[0m[0m value           = (known after apply)
+      [32m+[0m[0m zone_id         = "938d745de819d39760336c58e0a13727"
+    }
+
+[1m  # cloudflare_record.k3s_workers[0][0m will be created
+[0m  [32m+[0m[0m resource "cloudflare_record" "k3s_workers" {
+      [32m+[0m[0m allow_overwrite = false
+      [32m+[0m[0m content         = "24.126.172.118"
+      [32m+[0m[0m created_on      = (known after apply)
+      [32m+[0m[0m hostname        = (known after apply)
+      [32m+[0m[0m id              = (known after apply)
+      [32m+[0m[0m metadata        = (known after apply)
+      [32m+[0m[0m modified_on     = (known after apply)
+      [32m+[0m[0m name            = "k3s-worker-1"
+      [32m+[0m[0m proxiable       = (known after apply)
+      [32m+[0m[0m proxied         = false
+      [32m+[0m[0m ttl             = (known after apply)
+      [32m+[0m[0m type            = "A"
+      [32m+[0m[0m value           = (known after apply)
+      [32m+[0m[0m zone_id         = "938d745de819d39760336c58e0a13727"
+    }
+
+[1m  # cloudflare_record.k3s_workers[1][0m will be created
+[0m  [32m+[0m[0m resource "cloudflare_record" "k3s_workers" {
+      [32m+[0m[0m allow_overwrite = false
+      [32m+[0m[0m content         = "24.126.172.118"
+      [32m+[0m[0m created_on      = (known after apply)
+      [32m+[0m[0m hostname        = (known after apply)
+      [32m+[0m[0m id              = (known after apply)
+      [32m+[0m[0m metadata        = (known after apply)
+      [32m+[0m[0m modified_on     = (known after apply)
+      [32m+[0m[0m name            = "k3s-worker-2"
+      [32m+[0m[0m proxiable       = (known after apply)
+      [32m+[0m[0m proxied         = false
+      [32m+[0m[0m ttl             = (known after apply)
+      [32m+[0m[0m type            = "A"
+      [32m+[0m[0m value           = (known after apply)
+      [32m+[0m[0m zone_id         = "938d745de819d39760336c58e0a13727"
+    }
+
+[1m  # cloudflare_record.wildcard[0m will be created
+[0m  [32m+[0m[0m resource "cloudflare_record" "wildcard" {
+      [32m+[0m[0m allow_overwrite = false
+      [32m+[0m[0m content         = "24.126.172.118"
+      [32m+[0m[0m created_on      = (known after apply)
+      [32m+[0m[0m hostname        = (known after apply)
+      [32m+[0m[0m id              = (known after apply)
+      [32m+[0m[0m metadata        = (known after apply)
+      [32m+[0m[0m modified_on     = (known after apply)
+      [32m+[0m[0m name            = "*"
+      [32m+[0m[0m proxiable       = (known after apply)
+      [32m+[0m[0m proxied         = true
+      [32m+[0m[0m ttl             = (known after apply)
+      [32m+[0m[0m type            = "A"
+      [32m+[0m[0m value           = (known after apply)
+      [32m+[0m[0m zone_id         = "938d745de819d39760336c58e0a13727"
+    }
+
+[1m  # null_resource.configure_argocd[0m will be created
+[0m  [32m+[0m[0m resource "null_resource" "configure_argocd" {
+      [32m+[0m[0m id = (known after apply)
+    }
+
+[1m  # null_resource.install_argocd[0m will be created
+[0m  [32m+[0m[0m resource "null_resource" "install_argocd" {
+      [32m+[0m[0m id = (known after apply)
+    }
+
+[1m  # null_resource.k3s_master[0m will be created
+[0m  [32m+[0m[0m resource "null_resource" "k3s_master" {
+      [32m+[0m[0m id = (known after apply)
+    }
+
+[1m  # null_resource.k3s_workers[0][0m will be created
+[0m  [32m+[0m[0m resource "null_resource" "k3s_workers" {
+      [32m+[0m[0m id = (known after apply)
+    }
+
+[1m  # null_resource.k3s_workers[1][0m will be created
+[0m  [32m+[0m[0m resource "null_resource" "k3s_workers" {
+      [32m+[0m[0m id = (known after apply)
+    }
+
+[1m  # null_resource.lxc_config[0][0m will be created
+[0m  [32m+[0m[0m resource "null_resource" "lxc_config" {
+      [32m+[0m[0m id = (known after apply)
+    }
+
+[1m  # null_resource.lxc_config[1][0m will be created
+[0m  [32m+[0m[0m resource "null_resource" "lxc_config" {
+      [32m+[0m[0m id = (known after apply)
+    }
+
+[1m  # null_resource.lxc_config[2][0m will be created
+[0m  [32m+[0m[0m resource "null_resource" "lxc_config" {
+      [32m+[0m[0m id = (known after apply)
+    }
+
+[1m  # null_resource.proxmox_config[0m will be created
+[0m  [32m+[0m[0m resource "null_resource" "proxmox_config" {
+      [32m+[0m[0m id = (known after apply)
+    }
+
+[1m  # proxmox_lxc.k3s_master[0m will be created
+[0m  [32m+[0m[0m resource "proxmox_lxc" "k3s_master" {
+      [32m+[0m[0m arch            = "amd64"
+      [32m+[0m[0m cmode           = "tty"
+      [32m+[0m[0m console         = true
+      [32m+[0m[0m cores           = 2
+      [32m+[0m[0m cpulimit        = 0
+      [32m+[0m[0m cpuunits        = 1024
+      [32m+[0m[0m hostname        = "k3s-master"
+      [32m+[0m[0m id              = (known after apply)
+      [32m+[0m[0m memory          = 4096
+      [32m+[0m[0m onboot          = false
+      [32m+[0m[0m ostemplate      = "local:vztmpl/debian-12-standard_12.7-1_amd64.tar.zst"
+      [32m+[0m[0m ostype          = (known after apply)
+      [32m+[0m[0m password        = (sensitive value)
+      [32m+[0m[0m protection      = false
+      [32m+[0m[0m ssh_public_keys = <<-EOT
+            ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDj78hcU7NhVT5+qw+/A/Gf2atLKzGSJzIbCkzCBjQ5sUGC/t6XAp01kBginbJBOfrnsoYhE1+rKGUnyK1OjG5DQ7ZJZpQaFyKo/jH3aMQdo47ppts3Yqu6/cbodJHPZXJjzwP88c5O9cmtY7xd11hyMEE659Z/h0dEDIcx9ht3lCdPXVBRJp1/R6VhGyYcF8Gl000H4NI9GiQlcS5pE0agNnibNB8El/WGa/NK3iVIMAgpW5CAtgBmTuDzOJL6hS8k4yCHtlWahiSAEyZ5i8BBjMy1uA+5z5xhzToyx7+PpS5ucQ6iHCtNAwX4N6JgiJ0nz5g6COzliU/FfCekArFOU35kz1+7GbwjavI6bymEG7uX1R8wCF5/zKf0gb7TVpXeRYvsBPaDZyTo49J3kqv+CaUCPSaRxK2ISbeg+1bkpVBX1e/PiJGmYvsTsMobhnlP7YXR56vJ7aNNNNDTJE+FADSV6UnFA0KlALUgslJQLPqPI2flrPd5fgjA9q1Tg3h7WvXZFNi/Nu04Dgbd/5+92FEt5C9fNC6z1l5AR7DpvXk9doAooOFlpvf1t/tBwvKIzEWp6fcEsFUvfYtkDpDk65WdyUTbJEaTUQGNLtMmX5momBdY6iF0bOvxBcbT1ifq3OaFUd9ZUp2vxyrZl3L9t+b31rQIJIOIZG4AomBNQQ== amitpatole@lab01.myowncloud.network
+        EOT
+      [32m+[0m[0m start           = true
+      [32m+[0m[0m swap            = 0
+      [32m+[0m[0m tags            = (known after apply)
+      [32m+[0m[0m target_node     = "pve"
+      [32m+[0m[0m tty             = 2
+      [32m+[0m[0m unprivileged    = false
+      [32m+[0m[0m unused          = (known after apply)
+      [32m+[0m[0m vmid            = 400
+
+      [32m+[0m[0m features {
+          [32m+[0m[0m fuse    = true
+          [32m+[0m[0m keyctl  = true
+          [32m+[0m[0m mknod   = false
+          [32m+[0m[0m nesting = true
+            [90m# (1 unchanged attribute hidden)[0m[0m
+        }
+
+      [32m+[0m[0m network {
+          [32m+[0m[0m bridge = "vmbr0"
+          [32m+[0m[0m hwaddr = (known after apply)
+          [32m+[0m[0m id     = (known after apply)
+          [32m+[0m[0m ip     = "dhcp"
+          [32m+[0m[0m name   = "eth0"
+          [32m+[0m[0m tag    = (known after apply)
+          [32m+[0m[0m trunks = (known after apply)
+          [32m+[0m[0m type   = (known after apply)
+        }
+
+      [32m+[0m[0m rootfs {
+          [32m+[0m[0m size    = "60G"
+          [32m+[0m[0m storage = "local-lvm"
+          [32m+[0m[0m volume  = (known after apply)
+        }
+    }
+
+[1m  # proxmox_lxc.k3s_worker[0][0m will be created
+[0m  [32m+[0m[0m resource "proxmox_lxc" "k3s_worker" {
+      [32m+[0m[0m arch            = "amd64"
+      [32m+[0m[0m cmode           = "tty"
+      [32m+[0m[0m console         = true
+      [32m+[0m[0m cores           = 2
+      [32m+[0m[0m cpulimit        = 0
+      [32m+[0m[0m cpuunits        = 1024
+      [32m+[0m[0m hostname        = "k3s-worker-1"
+      [32m+[0m[0m id              = (known after apply)
+      [32m+[0m[0m memory          = 4096
+      [32m+[0m[0m onboot          = false
+      [32m+[0m[0m ostemplate      = "local:vztmpl/debian-12-standard_12.7-1_amd64.tar.zst"
+      [32m+[0m[0m ostype          = (known after apply)
+      [32m+[0m[0m password        = (sensitive value)
+      [32m+[0m[0m protection      = false
+      [32m+[0m[0m ssh_public_keys = <<-EOT
+            ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDj78hcU7NhVT5+qw+/A/Gf2atLKzGSJzIbCkzCBjQ5sUGC/t6XAp01kBginbJBOfrnsoYhE1+rKGUnyK1OjG5DQ7ZJZpQaFyKo/jH3aMQdo47ppts3Yqu6/cbodJHPZXJjzwP88c5O9cmtY7xd11hyMEE659Z/h0dEDIcx9ht3lCdPXVBRJp1/R6VhGyYcF8Gl000H4NI9GiQlcS5pE0agNnibNB8El/WGa/NK3iVIMAgpW5CAtgBmTuDzOJL6hS8k4yCHtlWahiSAEyZ5i8BBjMy1uA+5z5xhzToyx7+PpS5ucQ6iHCtNAwX4N6JgiJ0nz5g6COzliU/FfCekArFOU35kz1+7GbwjavI6bymEG7uX1R8wCF5/zKf0gb7TVpXeRYvsBPaDZyTo49J3kqv+CaUCPSaRxK2ISbeg+1bkpVBX1e/PiJGmYvsTsMobhnlP7YXR56vJ7aNNNNDTJE+FADSV6UnFA0KlALUgslJQLPqPI2flrPd5fgjA9q1Tg3h7WvXZFNi/Nu04Dgbd/5+92FEt5C9fNC6z1l5AR7DpvXk9doAooOFlpvf1t/tBwvKIzEWp6fcEsFUvfYtkDpDk65WdyUTbJEaTUQGNLtMmX5momBdY6iF0bOvxBcbT1ifq3OaFUd9ZUp2vxyrZl3L9t+b31rQIJIOIZG4AomBNQQ== amitpatole@lab01.myowncloud.network
+        EOT
+      [32m+[0m[0m start           = true
+      [32m+[0m[0m swap            = 0
+      [32m+[0m[0m tags            = (known after apply)
+      [32m+[0m[0m target_node     = "pve"
+      [32m+[0m[0m tty             = 2
+      [32m+[0m[0m unprivileged    = false
+      [32m+[0m[0m unused          = (known after apply)
+      [32m+[0m[0m vmid            = 500
+
+      [32m+[0m[0m features {
+          [32m+[0m[0m fuse    = true
+          [32m+[0m[0m keyctl  = true
+          [32m+[0m[0m mknod   = false
+          [32m+[0m[0m nesting = true
+            [90m# (1 unchanged attribute hidden)[0m[0m
+        }
+
+      [32m+[0m[0m network {
+          [32m+[0m[0m bridge = "vmbr0"
+          [32m+[0m[0m hwaddr = (known after apply)
+          [32m+[0m[0m id     = (known after apply)
+          [32m+[0m[0m ip     = "dhcp"
+          [32m+[0m[0m name   = "eth0"
+          [32m+[0m[0m tag    = (known after apply)
+          [32m+[0m[0m trunks = (known after apply)
+          [32m+[0m[0m type   = (known after apply)
+        }
+
+      [32m+[0m[0m rootfs {
+          [32m+[0m[0m size    = "60G"
+          [32m+[0m[0m storage = "local-lvm"
+          [32m+[0m[0m volume  = (known after apply)
+        }
+    }
+
+[1m  # proxmox_lxc.k3s_worker[1][0m will be created
+[0m  [32m+[0m[0m resource "proxmox_lxc" "k3s_worker" {
+      [32m+[0m[0m arch            = "amd64"
+      [32m+[0m[0m cmode           = "tty"
+      [32m+[0m[0m console         = true
+      [32m+[0m[0m cores           = 2
+      [32m+[0m[0m cpulimit        = 0
+      [32m+[0m[0m cpuunits        = 1024
+      [32m+[0m[0m hostname        = "k3s-worker-2"
+      [32m+[0m[0m id              = (known after apply)
+      [32m+[0m[0m memory          = 4096
+      [32m+[0m[0m onboot          = false
+      [32m+[0m[0m ostemplate      = "local:vztmpl/debian-12-standard_12.7-1_amd64.tar.zst"
+      [32m+[0m[0m ostype          = (known after apply)
+      [32m+[0m[0m password        = (sensitive value)
+      [32m+[0m[0m protection      = false
+      [32m+[0m[0m ssh_public_keys = <<-EOT
+            ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDj78hcU7NhVT5+qw+/A/Gf2atLKzGSJzIbCkzCBjQ5sUGC/t6XAp01kBginbJBOfrnsoYhE1+rKGUnyK1OjG5DQ7ZJZpQaFyKo/jH3aMQdo47ppts3Yqu6/cbodJHPZXJjzwP88c5O9cmtY7xd11hyMEE659Z/h0dEDIcx9ht3lCdPXVBRJp1/R6VhGyYcF8Gl000H4NI9GiQlcS5pE0agNnibNB8El/WGa/NK3iVIMAgpW5CAtgBmTuDzOJL6hS8k4yCHtlWahiSAEyZ5i8BBjMy1uA+5z5xhzToyx7+PpS5ucQ6iHCtNAwX4N6JgiJ0nz5g6COzliU/FfCekArFOU35kz1+7GbwjavI6bymEG7uX1R8wCF5/zKf0gb7TVpXeRYvsBPaDZyTo49J3kqv+CaUCPSaRxK2ISbeg+1bkpVBX1e/PiJGmYvsTsMobhnlP7YXR56vJ7aNNNNDTJE+FADSV6UnFA0KlALUgslJQLPqPI2flrPd5fgjA9q1Tg3h7WvXZFNi/Nu04Dgbd/5+92FEt5C9fNC6z1l5AR7DpvXk9doAooOFlpvf1t/tBwvKIzEWp6fcEsFUvfYtkDpDk65WdyUTbJEaTUQGNLtMmX5momBdY6iF0bOvxBcbT1ifq3OaFUd9ZUp2vxyrZl3L9t+b31rQIJIOIZG4AomBNQQ== amitpatole@lab01.myowncloud.network
+        EOT
+      [32m+[0m[0m start           = true
+      [32m+[0m[0m swap            = 0
+      [32m+[0m[0m tags            = (known after apply)
+      [32m+[0m[0m target_node     = "pve"
+      [32m+[0m[0m tty             = 2
+      [32m+[0m[0m unprivileged    = false
+      [32m+[0m[0m unused          = (known after apply)
+      [32m+[0m[0m vmid            = 501
+
+      [32m+[0m[0m features {
+          [32m+[0m[0m fuse    = true
+          [32m+[0m[0m keyctl  = true
+          [32m+[0m[0m mknod   = false
+          [32m+[0m[0m nesting = true
+            [90m# (1 unchanged attribute hidden)[0m[0m
+        }
+
+      [32m+[0m[0m network {
+          [32m+[0m[0m bridge = "vmbr0"
+          [32m+[0m[0m hwaddr = (known after apply)
+          [32m+[0m[0m id     = (known after apply)
+          [32m+[0m[0m ip     = "dhcp"
+          [32m+[0m[0m name   = "eth0"
+          [32m+[0m[0m tag    = (known after apply)
+          [32m+[0m[0m trunks = (known after apply)
+          [32m+[0m[0m type   = (known after apply)
+        }
+
+      [32m+[0m[0m rootfs {
+          [32m+[0m[0m size    = "60G"
+          [32m+[0m[0m storage = "local-lvm"
+          [32m+[0m[0m volume  = (known after apply)
+        }
+    }
+
+[1mPlan:[0m 17 to add, 0 to change, 0 to destroy.
+[0m
+Changes to Outputs:
+  [32m+[0m[0m argocd_initial_password_command = "kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath=\"{.data.password}\" | base64 -d"
+  [32m+[0m[0m argocd_url                      = "https://argocd.myhomelabsolutions.com"
+  [32m+[0m[0m k3s_join_token                  = (sensitive value)
+  [32m+[0m[0m k3s_master_ip                   = "k3s-master"
+  [32m+[0m[0m k3s_worker_ips                  = [
+      [32m+[0m[0m "k3s-worker-1",
+      [32m+[0m[0m "k3s-worker-2",
+    ]
+  [32m+[0m[0m kubeconfig_command              = "ssh root@k3s-master 'sudo cat /etc/rancher/k3s/k3s.yaml' > kubeconfig.yaml && sed -i 's/127.0.0.1/k3s-master/g' kubeconfig.yaml"
+  [32m+[0m[0m proxmox_config_id               = (known after apply)
+  [32m+[0m[0m wildcard_domain                 = "*.myhomelabsolutions.com"
+[0m[1mnull_resource.proxmox_config: Creating...[0m[0m
+[0m[1mnull_resource.proxmox_config: Provisioning with 'remote-exec'...[0m[0m
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mConnecting to remote host via SSH...
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0m  Host: 10.0.0.99
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0m  User: root
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0m  Password: true
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0m  Private key: false
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0m  Certificate: false
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0m  SSH Agent: true
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0m  Checking Host Key: false
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0m  Target Platform: unix
+[0m[1mcloudflare_record.argocd: Creating...[0m[0m
+[0m[1mcloudflare_record.k3s_workers[1]: Creating...[0m[0m
+[0m[1mcloudflare_record.wildcard: Creating...[0m[0m
+[0m[1mcloudflare_record.k3s_master: Creating...[0m[0m
+[0m[1mcloudflare_record.k3s_workers[0]: Creating...[0m[0m
+[0m[1mproxmox_lxc.k3s_worker[0]: Creating...[0m[0m
+[0m[1mproxmox_lxc.k3s_worker[1]: Creating...[0m[0m
+[0m[1mproxmox_lxc.k3s_master: Creating...[0m[0m
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mConnected!
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.ipv4.ip_forward = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0m* Applying /usr/lib/sysctl.d/10-pve-ct-inotify-limits.conf ...
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0m* Applying /usr/lib/sysctl.d/10-pve.conf ...
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0m* Applying /usr/lib/sysctl.d/50-pid-max.conf ...
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0m* Applying /etc/sysctl.d/99-kubernetes-cri.conf ...
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0m* Applying /usr/lib/sysctl.d/99-protect-links.conf ...
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0m* Applying /etc/sysctl.d/99-sysctl.conf ...
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0m* Applying /usr/lib/sysctl.d/pve-firewall.conf ...
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0m* Applying /etc/sysctl.conf ...
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mfs.inotify.max_queued_events = 8388608
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mfs.inotify.max_user_instances = 65536
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mfs.inotify.max_user_watches = 4194304
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mvm.max_map_count = 262144
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.ipv4.neigh.default.gc_thresh3 = 8192
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.ipv6.neigh.default.gc_thresh3 = 8192
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mkernel.keys.maxkeys = 2000
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 0
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 0
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-arptables = 0
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-filter-vlan-tagged = 0
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.ipv4.igmp_link_local_mcast_reports = 0
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mfs.aio-max-nr = 1048576
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mkernel.pid_max = 4194304
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.ipv4.ip_forward = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.ipv4.ip_forward = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.ipv4.ip_forward = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.ipv4.ip_forward = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.ipv4.ip_forward = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.ipv4.ip_forward = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.ipv4.ip_forward = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.ipv4.ip_forward = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.ipv4.ip_forward = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.ipv4.ip_forward = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.ipv4.ip_forward = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mfs.protected_fifos = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mfs.protected_hardlinks = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mfs.protected_regular = 2
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mfs.protected_symlinks = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.ipv4.ip_forward = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.ipv4.conf.all.rp_filter = 2
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.ipv4.ip_forward = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-ip6tables = 1
+[0m[1mnull_resource.proxmox_config (remote-exec):[0m [0mnet.bridge.bridge-nf-call-iptables = 1
+[0m[1mnull_resource.proxmox_config: Creation complete after 0s [id=2555235098184880084][0m
+[0m[1mcloudflare_record.argocd: Creation complete after 1s [id=b680f3a4d9df32ac55b05d524bb71b40][0m
+[0m[1mcloudflare_record.k3s_master: Creation complete after 1s [id=388e044350951e8e96ee82ed48aacc76][0m
+[0m[1mcloudflare_record.k3s_workers[1]: Creation complete after 2s [id=e53201cdd17665ef693a5dc6767ab673][0m
+[0m[1mcloudflare_record.wildcard: Creation complete after 2s [id=a644c75c50f92d41c00a3dbb0561ed57][0m
+[0m[1mcloudflare_record.k3s_workers[0]: Creation complete after 2s [id=29b310b84e49097fa5c74e904c96274e][0m
+[0m[1mproxmox_lxc.k3s_worker[1]: Still creating... [10s elapsed][0m[0m
+[0m[1mproxmox_lxc.k3s_master: Still creating... [10s elapsed][0m[0m
+[0m[1mproxmox_lxc.k3s_worker[0]: Still creating... [10s elapsed][0m[0m
+[0m[1mproxmox_lxc.k3s_worker[0]: Provisioning with 'remote-exec'...[0m[0m
+[0m[1mproxmox_lxc.k3s_worker[0] (remote-exec):[0m [0mConnecting to remote host via SSH...
+[0m[1mproxmox_lxc.k3s_worker[0] (remote-exec):[0m [0m  Host: k3s-worker-1
+[0m[1mproxmox_lxc.k3s_worker[0] (remote-exec):[0m [0m  User: root
+[0m[1mproxmox_lxc.k3s_worker[0] (remote-exec):[0m [0m  Password: false
+[0m[1mproxmox_lxc.k3s_worker[0] (remote-exec):[0m [0m  Private key: true
+[0m[1mproxmox_lxc.k3s_worker[0] (remote-exec):[0m [0m  Certificate: false
+[0m[1mproxmox_lxc.k3s_worker[0] (remote-exec):[0m [0m  SSH Agent: true
+[0m[1mproxmox_lxc.k3s_worker[0] (remote-exec):[0m [0m  Checking Host Key: false
+[0m[1mproxmox_lxc.k3s_worker[0] (remote-exec):[0m [0m  Target Platform: unix
+[0m[1mproxmox_lxc.k3s_master: Provisioning with 'remote-exec'...[0m[0m
+[0m[1mproxmox_lxc.k3s_master (remote-exec):[0m [0mConnecting to remote host via SSH...
+[0m[1mproxmox_lxc.k3s_master (remote-exec):[0m [0m  Host: k3s-master
+[0m[1mproxmox_lxc.k3s_master (remote-exec):[0m [0m  User: root
+[0m[1mproxmox_lxc.k3s_master (remote-exec):[0m [0m  Password: false
+[0m[1mproxmox_lxc.k3s_master (remote-exec):[0m [0m  Private key: true
+[0m[1mproxmox_lxc.k3s_master (remote-exec):[0m [0m  Certificate: false
+[0m[1mproxmox_lxc.k3s_master (remote-exec):[0m [0m  SSH Agent: true
+[0m[1mproxmox_lxc.k3s_master (remote-exec):[0m [0m  Checking Host Key: false
+[0m[1mproxmox_lxc.k3s_master (remote-exec):[0m [0m  Target Platform: unix
+[0m[1mproxmox_lxc.k3s_worker[1]: Provisioning with 'remote-exec'...[0m[0m
+[0m[1mproxmox_lxc.k3s_worker[1] (remote-exec):[0m [0mConnecting to remote host via SSH...
+[0m[1mproxmox_lxc.k3s_worker[1] (remote-exec):[0m [0m  Host: k3s-worker-2
+[0m[1mproxmox_lxc.k3s_worker[1] (remote-exec):[0m [0m  User: root
+[0m[1mproxmox_lxc.k3s_worker[1] (remote-exec):[0m [0m  Password: false
+[0m[1mproxmox_lxc.k3s_worker[1] (remote-exec):[0m [0m  Private key: true
+[0m[1mproxmox_lxc.k3s_worker[1] (remote-exec):[0m [0m  Certificate: false
+[0m[1mproxmox_lxc.k3s_worker[1] (remote-exec):[0m [0m  SSH Agent: true
+[0m[1mproxmox_lxc.k3s_worker[1] (remote-exec):[0m [0m  Checking Host Key: false
+[0m[1mproxmox_lxc.k3s_worker[1] (remote-exec):[0m [0m  Target Platform: unix
+[0m[1mproxmox_lxc.k3s_worker[1]: Still creating... [20s elapsed][0m[0m
+[0m[1mproxmox_lxc.k3s_worker[0]: Still creating... [20s elapsed][0m[0m
+[0m[1mproxmox_lxc.k3s_master: Still creating... [20s elapsed][0m[0m
+[0m[1mproxmox_lxc.k3s_master: Still creating... [30s elapsed][0m[0m
+[0m[1mproxmox_lxc.k3s_worker[0]: Still creating... [30s elapsed][0m[0m
+[0m[1mproxmox_lxc.k3s_worker[1]: Still creating... [30s elapsed][0m[0m
+[0m[1mproxmox_lxc.k3s_worker[0] (remote-exec):[0m [0mConnecting to remote host via SSH...
+[0m[1mproxmox_lxc.k3s_worker[0] (remote-exec):[0m [0m  Host: k3s-worker-1
+[0m[1mproxmox_lxc.k3s_worker[0] (remote-exec):[0m [0m  User: root
+[0m[1mproxmox_lxc.k3s_worker[0] (remote-exec):[0m [0m  Password: false
+[0m[1mproxmox_lxc.k3s_worker[0] (remote-exec):[0m [0m  Private key: true
+[0m[1mproxmox_lxc.k3s_worker[0] (remote-exec):[0m [0m  Certificate: false
+[0m[1mproxmox_lxc.k3s_worker[0] (remote-exec):[0m [0m  SSH Agent: true
+[0m[1mproxmox_lxc.k3s_worker[0] (remote-exec):[0m [0m  Checking Host Key: false
+[0m[1mproxmox_lxc.k3s_worker[0] (remote-exec):[0m [0m  Target Platform: unix
+[0m[1mproxmox_lxc.k3s_master (remote-exec):[0m [0mConnecting to remote host via SSH...
+[0m[1mproxmox_lxc.k3s_master (remote-exec):[0m [0m  Host: k3s-master
+[0m[1mproxmox_lxc.k3s_master (remote-exec):[0m [0m  User: root
+[0m[1mproxmox_lxc.k3s_master (remote-exec):[0m [0m  Password: false
+[0m[1mproxmox_lxc.k3s_master (remote-exec):[0m [0m  Private key: true
+[0m[1mproxmox_lxc.k3s_master (remote-exec):[0m [0m  Certificate: false
+[0m[1mproxmox_lxc.k3s_master (remote-exec):[0m [0m  SSH Agent: true
+[0m[1mproxmox_lxc.k3s_master (remote-exec):[0m [0m  Checking Host Key: false
+[0m[1mproxmox_lxc.k3s_master (remote-exec):[0m [0m  Target Platform: unix
+[0m[1mproxmox_lxc.k3s_worker[1] (remote-exec):[0m [0mConnecting to remote host via SSH...
+[0m[1mproxmox_lxc.k3s_worker[1] (remote-exec):[0m [0m  Host: k3s-worker-2
+[0m[1mproxmox_lxc.k3s_worker[1] (remote-exec):[0m [0m  User: root
+[0m[1mproxmox_lxc.k3s_worker[1] (remote-exec):[0m [0m  Password: false
+[0m[1mproxmox_lxc.k3s_worker[1] (remote-exec):[0m [0m  Private key: true
+[0m[1mproxmox_lxc.k3s_worker[1] (remote-exec):[0m [0m  Certificate: false
+[0m[1mproxmox_lxc.k3s_worker[1] (remote-exec):[0m [0m  SSH Agent: true
+[0m[1mproxmox_lxc.k3s_worker[1] (remote-exec):[0m [0m  Checking Host Key: false
+[0m[1mproxmox_lxc.k3s_worker[1] (remote-exec):[0m [0m  Target Platform: unix
