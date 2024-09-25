@@ -26,9 +26,8 @@ resource "null_resource" "k3s_master" {
   provisioner "local-exec" {
     command = <<-EOT
       scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/id_rsa ${var.container_user}@${proxmox_lxc.k3s_master.hostname}:/tmp/k3s_join_token .
-      for i in 0 1; do
-        scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/id_rsa k3s_join_token ${var.container_user}@${proxmox_lxc.k3s_worker[i].hostname}:/tmp/
-      done
+      scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/id_rsa k3s_join_token ${var.container_user}@${proxmox_lxc.k3s_worker[0].hostname}:/tmp/
+      scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i ~/.ssh/id_rsa k3s_join_token ${var.container_user}@${proxmox_lxc.k3s_worker[1].hostname}:/tmp/
       rm k3s_join_token
     EOT
   }
