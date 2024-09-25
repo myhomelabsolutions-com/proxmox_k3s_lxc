@@ -55,11 +55,3 @@ resource "null_resource" "k3s_workers" {
     ]
   }
 }
-
-output "k3s_master_ip" {
-  value = proxmox_lxc.k3s_master.hostname
-}
-
-output "k3s_worker_ips" {
-  value = proxmox_lxc.k3s_worker[*].hostname
-}
