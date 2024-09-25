@@ -1,4 +1,4 @@
-resource "null_resource" "install_argocd" {
+resource "null_resource" "install_argocd_and_nginx" {
   depends_on = [null_resource.k3s_master, null_resource.k3s_workers]
 
   connection {
@@ -8,23 +8,28 @@ resource "null_resource" "install_argocd" {
     host        = proxmox_lxc.k3s_master.hostname
   }
 
+  provisioner "file" {
+    source      = "nginx-ingress.yaml"
+    destination = "/tmp/nginx-ingress.yaml"
+  }
+
+  provisioner "file" {
+    source      = "argocd.yaml"
+    destination = "/tmp/argocd.yaml"
+  }
+
   provisioner "remote-exec" {
     inline = [
-      # Delete existing resources if they exist
-      "kubectl delete namespace argocd --ignore-not-found",
-      "kubectl delete -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.1.0/deploy/static/provider/cloud/deploy.yaml --ignore-not-found",
-      "kubectl delete -f https://github.com/cert-manager/cert-manager/releases/download/v1.8.0/cert-manager.yaml --ignore-not-found",
+      # Create namespaces
+      "kubectl create namespace ingress-nginx --dry-run=client -o yaml | kubectl apply -f -",
+      "kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f -",
+      "kubectl create namespace cert-manager --dry-run=client -o yaml | kubectl apply -f -",
 
-      # Recreate resources
-      "kubectl create namespace argocd",
-      "kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml",
-      "kubectl wait --for=condition=available --timeout=600s deployment/argocd-server -n argocd",
+      # Apply NGINX Ingress Controller
+      "kubectl apply -f /tmp/nginx-ingress.yaml",
+      "kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app=nginx-ingress --timeout=300s",
 
-      # Install Nginx Ingress Controller
-      "kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.1.0/deploy/static/provider/cloud/deploy.yaml",
-      "kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=300s",
-
-      # Install cert-manager for SSL certificates
+      # Install cert-manager
       "kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.8.0/cert-manager.yaml",
       "kubectl wait --for=condition=available --timeout=300s deployment/cert-manager -n cert-manager",
 
@@ -48,7 +53,12 @@ resource "null_resource" "install_argocd" {
       EOT
       EOF
       ,
-      # Create Ingress for ArgoCD
+
+      # Apply ArgoCD
+      "kubectl apply -f /tmp/argocd.yaml",
+      "kubectl wait --namespace argocd --for=condition=available --timeout=600s deployment/argocd-server",
+
+      # Update ArgoCD Ingress to use TLS
       <<-EOF
       cat <<EOT | kubectl apply -f -
       apiVersion: networking.k8s.io/v1
@@ -57,12 +67,11 @@ resource "null_resource" "install_argocd" {
         name: argocd-server-ingress
         namespace: argocd
         annotations:
-          nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-          nginx.ingress.kubernetes.io/ssl-redirect: "true"
-          cert-manager.io/cluster-issuer: letsencrypt-prod
+          kubernetes.io/ingress.class: nginx
+          cert-manager.io/cluster-issuer: "letsencrypt-prod"
+          nginx.ingress.kubernetes.io/ssl-passthrough: "true"
           nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
       spec:
-        ingressClassName: nginx
         tls:
         - hosts:
           - argocd.${var.domain_name}
@@ -75,16 +84,21 @@ resource "null_resource" "install_argocd" {
               pathType: Prefix
               backend:
                 service:
-                  name: argocd-server
+                  name: argocd-server-service
                   port: 
-                    number: 443
+                    number: 80
       EOT
       EOF
+      ,
+
+      # Clean up temporary files
+      "rm /tmp/nginx-ingress.yaml /tmp/argocd.yaml"
     ]
   }
 }
+
 resource "null_resource" "configure_argocd" {
-  depends_on = [null_resource.install_argocd]
+  depends_on = [null_resource.install_argocd_and_nginx]
 
   connection {
     type        = "ssh"
