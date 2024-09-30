@@ -40,3 +40,4 @@ k3s_join_token.txt
 deployment_log.txt
 k3s_join_token
 kubeconfig.yaml
+settingss.json
