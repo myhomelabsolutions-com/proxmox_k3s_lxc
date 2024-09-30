@@ -49,3 +49,9 @@ variable "external_ip_address" {
   type        = string
   description = "External IP address for the cluster"
 }
+
+variable "deploy_cloudflare_dns" {
+  type        = bool
+  description = "Whether to deploy Cloudflare DNS entries"
+  default     = true
+}
