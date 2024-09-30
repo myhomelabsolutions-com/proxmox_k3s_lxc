@@ -17,18 +17,3 @@ resource "cloudflare_record" "k3s_workers" {
   proxied = false
 }
 
-resource "cloudflare_record" "argocd" {
-  zone_id = var.cloudflare_zone_id
-  name    = "argocd"
-  content = var.external_ip_address
-  type    = "A"
-  proxied = true
-}
-
-resource "cloudflare_record" "wildcard" {
-  zone_id = var.cloudflare_zone_id
-  name    = "*"
-  content = var.external_ip_address
-  type    = "A"
-  proxied = true
-}
