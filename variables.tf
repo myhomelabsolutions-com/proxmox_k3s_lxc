@@ -44,3 +44,8 @@ variable "email_address" {
   type        = string
   description = "Email address for Let's Encrypt SSL certificate"
 }
+
+variable "external_ip_address" {
+  type        = string
+  description = "External IP address for the cluster"
+}

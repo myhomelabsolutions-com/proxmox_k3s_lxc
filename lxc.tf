@@ -3,16 +3,16 @@
 resource "proxmox_lxc" "k3s_master" {
   target_node  = "pve"
   hostname     = "k3s-master"
-  ostemplate   = "local:vztmpl/debian-12-standard_12.7-1_amd64.tar.zst"
+  ostemplate   = "local-store:vztmpl/debian-12-standard_12.7-1_amd64.tar.zst"
   password     = var.container_password
   unprivileged = false
   start        = true
   vmid         = 400
 
-  cores  = 2
-  memory = 4096
+  cores  = 4
+  memory = 8196
   rootfs {
-    storage = "local-lvm"
+    storage = "local-store"
     size    = "60G"
   }
 
@@ -20,6 +20,7 @@ resource "proxmox_lxc" "k3s_master" {
     name   = "eth0"
     bridge = "vmbr0"
     ip     = "dhcp"
+
   }
 
   features {
@@ -43,26 +44,27 @@ resource "proxmox_lxc" "k3s_master" {
       "echo '#!/bin/sh -e' > /etc/rc.local",
       "echo 'ln -s /dev/console /dev/kmsg' >> /etc/rc.local",
       "echo 'mount --make-rshared /' >> /etc/rc.local",
+      "echo 'swapoff -a' >> /etc/rc.local",
       "chmod +x /etc/rc.local",
+      "swapoff -a",
       "reboot",
     ]
   }
 }
-
 resource "proxmox_lxc" "k3s_worker" {
   count        = 2
   target_node  = "pve"
   hostname     = "k3s-worker-${count.index + 1}"
-  ostemplate   = "local:vztmpl/debian-12-standard_12.7-1_amd64.tar.zst"
+  ostemplate   = "local-store:vztmpl/debian-12-standard_12.7-1_amd64.tar.zst"
   password     = var.container_password
   unprivileged = false
   start        = true
   vmid         = 500 + count.index
 
-  cores  = 2
-  memory = 4096
+  cores  = 4
+  memory = 8196
   rootfs {
-    storage = "local-lvm"
+    storage = "local-store"
     size    = "60G"
   }
 
@@ -70,6 +72,7 @@ resource "proxmox_lxc" "k3s_worker" {
     name   = "eth0"
     bridge = "vmbr0"
     ip     = "dhcp"
+
   }
 
   features {
