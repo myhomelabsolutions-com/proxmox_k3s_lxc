@@ -14,7 +14,7 @@ resource "null_resource" "k3s_master" {
     inline = [
       "export ANSIBLE_HOST_KEY_CHECKING=False",
       "if ! command -v k3s &> /dev/null; then",
-      "  curl -sfL https://get.k3s.io | K3S_DISABLE_TRAEFIK=true sh - || exit 1",
+      "  curl -sfL https://get.k3s.io | K3S_DISABLE_TRAEFIK=true INSTALL_K3S_EXEC=\"server --cluster-init --node-taint node-role.kubernetes.io/master=true:NoSchedule --node-label node-role.kubernetes.io/master=true --node-label node-role.kubernetes.io/control-plane=true --node-label node-role.kubernetes.io/etcd=true\" sh - || exit 1",
       "fi",
       "until kubectl get nodes | grep -q ' Ready'; do sleep 5; done",
       "kubectl get nodes",
@@ -48,7 +48,7 @@ resource "null_resource" "k3s_workers" {
     inline = [
       "if ! command -v k3s &> /dev/null; then",
       "  K3S_TOKEN=$(cat /tmp/k3s_join_token)",
-      "  curl -sfL https://get.k3s.io | K3S_URL=https://${proxmox_lxc.k3s_master.hostname}:6443 K3S_TOKEN=$K3S_TOKEN K3S_NODE_LABEL=node-role.kubernetes.io/worker=true K3S_NODE_TAINT=node-role.kubernetes.io/worker=:NoSchedule K3S_DISABLE_TRAEFIK=true sh - || exit 1",
+      "  curl -sfL https://get.k3s.io | K3S_URL=https://${proxmox_lxc.k3s_master.hostname}:6443 K3S_TOKEN=$K3S_TOKEN K3S_NODE_LABEL=node-role.kubernetes.io/worker=true K3S_DISABLE_TRAEFIK=true sh - || exit 1",
       "fi",
       "rm /tmp/k3s_join_token",
     ]
