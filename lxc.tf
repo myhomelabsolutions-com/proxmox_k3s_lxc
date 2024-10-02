@@ -96,6 +96,7 @@ resource "proxmox_lxc" "k3s_worker" {
       "echo 'ln -s /dev/console /dev/kmsg' >> /etc/rc.local",
       "echo 'mount --make-rshared /' >> /etc/rc.local",
       "chmod +x /etc/rc.local",
+      "swapoff -a",
       "reboot",
     ]
   }
