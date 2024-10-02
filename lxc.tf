@@ -3,7 +3,7 @@
 resource "proxmox_lxc" "k3s_master" {
   target_node  = "pve"
   hostname     = "k3s-master"
-  ostemplate   = "local-store:vztmpl/debian-12-standard_12.7-1_amd64.tar.zst"
+  ostemplate   = "local:vztmpl/debian-12-standard_12.7-1_amd64.tar.zst"
   password     = var.container_password
   unprivileged = false
   start        = true
@@ -12,7 +12,7 @@ resource "proxmox_lxc" "k3s_master" {
   cores  = 4
   memory = 8196
   rootfs {
-    storage = "local-store"
+    storage = "local-lvm"
     size    = "60G"
   }
 
@@ -55,7 +55,7 @@ resource "proxmox_lxc" "k3s_worker" {
   count        = 2
   target_node  = "pve"
   hostname     = "k3s-worker-${count.index + 1}"
-  ostemplate   = "local-store:vztmpl/debian-12-standard_12.7-1_amd64.tar.zst"
+  ostemplate   = "local:vztmpl/debian-12-standard_12.7-1_amd64.tar.zst"
   password     = var.container_password
   unprivileged = false
   start        = true
@@ -64,7 +64,7 @@ resource "proxmox_lxc" "k3s_worker" {
   cores  = 4
   memory = 8196
   rootfs {
-    storage = "local-store"
+    storage = "local-lvm"
     size    = "60G"
   }
 
